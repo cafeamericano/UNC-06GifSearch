@@ -3,18 +3,31 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
   <title>Giphy API</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
 
 <body>
   <h1 class='text-center'>Food</h1>
   <hr />
 
+  <div class='text-center'>
+    <input id='keywordInput' type='text'>
+    <button onclick="addNewSearchWord()" type='submit'>Submit</button>
+  </div>
+  <br />
+
   <div id="buttonContainer" class='text-center'></div>
-  <div id="gifContainer" class="container d-flex justify-content-center flex-wrap"></div>
+  <hr/>
+
+  <div id="favoritesContainer" class='text-center'></div>
+  <hr/>
+
+  <div id="gifContainer" class="container-fluid d-flex justify-content-center flex-wrap"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="logic.js"></script>

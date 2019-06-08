@@ -7,12 +7,10 @@ let topics = ['Croissants', 'Noodles', 'Sushi', 'Pizza', 'Tacos', 'Soup', 'Salad
 let grabbedObjects = []
 
 //Render Buttons
-for (i = 0; i < topics.length; i++) {
-    $("#buttonContainer").append(`<button class='btn btn-success mb-3 ml-1 mr-1' value='${topics[i]}'>${topics[i]}</button>`)
-};
+renderButtons()
 
 //Event Listeners
-$(document).on("click", "button", function () {
+$(document).on("click", ".keywordButtons", function () {
 
     //Search Parameters
     let searchTerms = $(this).val();
@@ -28,15 +26,17 @@ $(document).on("click", "button", function () {
         method: "GET",
     }).then(function (response) {
         for (i = 0; i < response.data.length; i++) {
-            grabbedObjects.push(response.data[i])
+            var obj = {};
+            obj.id = response.data[i].id
+            obj.imgAnimated = response.data[i].images.original.url
+            obj.imgStill = response.data[i].images.original_still.url
+            obj.rating = response.data[i].rating
+            obj.isFavorite = false;
+            grabbedObjects.push(obj)
         };
         console.log(grabbedObjects)
-        for (i = 0; i < grabbedObjects.length; i++) {
-            $("#gifContainer").prepend(`<img height='100px' width='100px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>`)
-        };
+        renderGrabbedObjects()
     });
-
-    //End
 
 });
 
@@ -54,3 +54,34 @@ $(document).on("click", ".returnedGIF", function () {
         $(`#${ID}`).attr('data-isanimated', 'false')
     }
 });
+
+function addNewSearchWord() {
+    let wordToBeAdded = $('#keywordInput').val();
+    topics.unshift(wordToBeAdded)
+    renderButtons()
+    //$("#buttonContainer").prepend(`<button class='btn btn-success mb-3 ml-1 mr-1' value='${wordToBeAdded}'>${wordToBeAdded}</button>`)
+};
+
+function renderButtons() {
+    $("#buttonContainer").empty()
+    for (i = 0; i < topics.length; i++) {
+        $("#buttonContainer").append(`<button class='btn btn-success mb-3 ml-1 mr-1 keywordButtons' value='${topics[i]}'>${topics[i]}</button>`)
+    }
+};
+
+function renderGrabbedObjects() {
+    for (i = 0; i < grabbedObjects.length; i++) {
+        let tempID = grabbedObjects[i].id
+        $("#gifContainer").prepend(`
+            <div id="${tempID}-div" class='m-2 shadow'>
+                <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].imgStill}" data-animatedurl="${grabbedObjects[i].imgAnimated}" src=${grabbedObjects[i].imgStill}>
+                <div class="card-footer">
+                    <button><i class="far fa-heart"></i></button>
+                    <br/>
+                    <small>Rating: ${grabbedObjects[i].rating.toUpperCase()}</small>
+                </div>
+            </div>
+        `)
+    };
+};
+

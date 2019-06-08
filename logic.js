@@ -5,6 +5,7 @@ let apiKey = 'totZ3Gjqp9mJMwb9urodXV1OIB0cppGk';
 //List of Options
 let topics = ['Croissants', 'Noodles', 'Sushi', 'Pizza', 'Tacos', 'Soup', 'Salad', 'Pasta']
 let grabbedObjects = []
+let favorites = []
 
 //Render Buttons
 renderButtons()
@@ -43,6 +44,7 @@ $(document).on("click", ".keywordButtons", function () {
 //Animate or deanimate a GIF upon clicking
 $(document).on("click", ".returnedGIF", function () {
     let ID = $(this).attr("id");
+    console.log(ID)
     let animatedURL = $(this).attr("data-animatedurl");
     let stillURL = $(this).attr("data-stillurl");
     let isAnimated = $(this).attr("data-isanimated");
@@ -53,6 +55,8 @@ $(document).on("click", ".returnedGIF", function () {
         $(`#${ID}`).attr('src', stillURL)
         $(`#${ID}`).attr('data-isanimated', 'false')
     }
+    addToFavorites(ID);
+    console.log('favorited items: ' + favorites)
 });
 
 function addNewSearchWord() {
@@ -73,7 +77,7 @@ function renderGrabbedObjects() {
     for (i = 0; i < grabbedObjects.length; i++) {
         let tempID = grabbedObjects[i].id
         $("#gifContainer").prepend(`
-            <div id="${tempID}-div" class='m-2 shadow'>
+            <div id="${tempID}-div" class='m-2 p-2 shadow' style="background: white">
                 <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].imgStill}" data-animatedurl="${grabbedObjects[i].imgAnimated}" src=${grabbedObjects[i].imgStill}>
                 <div class="card-footer">
                     <button><i class="far fa-heart"></i></button>
@@ -85,3 +89,10 @@ function renderGrabbedObjects() {
     };
 };
 
+function addToFavorites(passedId) {
+    for (i=0; i<grabbedObjects.length; i++) {
+        if (grabbedObjects[i].id === passedId) {
+            favorites.push(grabbedObjects[i].id)
+        }
+    }
+}

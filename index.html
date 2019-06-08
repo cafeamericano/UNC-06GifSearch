@@ -1,48 +1,23 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <title>Giphy API</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
+  <h1 class='text-center'>Food</h1>
+  <hr />
+
+  <div id="buttonContainer" class='text-center'></div>
+  <div id="gifContainer" class="container d-flex justify-content-center flex-wrap"></div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script type="text/javascript">
-    // Example queryURL for Giphy API
-    let apiKey = 'totZ3Gjqp9mJMwb9urodXV1OIB0cppGk';
-    let searchTerms = 'spongebob';
-    let limit = '50';
-    var queryURL = `http://api.giphy.com/v1/gifs/search?q=${searchTerms}&api_key=${apiKey}&limit=${limit}`;
-
-    $.ajax({
-      url: queryURL,
-      method: "GET",
-    }).then(function (response) {
-      console.log(response);
-      for (i = 0; i < 50; i++) {
-        let title = response.data[i].title
-        let image = response.data[i].images.original.url
-        let rating = response.data[i].rating
-        $('body').append(`
-          <div class="card m-3 d-inline-block" style="width: 220px">
-            <div class="card-header">
-              ${title}
-            </div>
-            <div class="card-body">
-              <img class='m-3' height='150px' width='150px' src=${image}>
-            </div>
-            <div class="card-footer">
-              ${rating}
-            </div>
-          </div>
-        `)
-      }
-    });
-
-
-  </script>
+  <script src="logic.js"></script>
 
 </body>
 

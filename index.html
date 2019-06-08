@@ -9,26 +9,36 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
     integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy&display=swap" rel="stylesheet">
 </head>
 
-<body class='bg-dark'>
-  <h1 class='text-center'>Food</h1>
-  <hr />
+<body class='bg-dark pb-3'>
 
-  <div class='text-center'>
-    <input id='keywordInput' type='text'>
-    <button onclick="addNewSearchWord()" type='submit'>Submit</button>
+  <div class='bg-success pt-3 pb-5'>
+    <h1 class='text-center mt-5 text-light' style="font-family: 'Luckiest Guy', cursive;">Foodpalooza</h1>
+    <div class='text-center'>
+      <input id='keywordInput' type='text'>
+      <br><br>
+      <button onclick="addNewSearchWord()" type='submit' class='btn btn-outline-light'>Submit</button>
+    </div>
   </div>
-  <br />
-
-  <div id="buttonContainer" class='text-center'></div>
   <hr/>
 
-  <div id="favoritesContainer" class='text-center'></div>
+  <h4 class="text-light">Buttons</h4>
+  <div id="buttonContainer" class='bg-danger pt-3' style="overflow: scroll; display: flex; justify-content: flex-start"></div>
   <hr/>
 
-  <div id="gifContainer" class="container-fluid d-flex justify-content-center flex-wrap"></div>
+  <h4 class="text-light">Favorites</h4>
+  <div id="favoritesContainer" class='text-center bg-info' style="min-height: 100px"></div>
+  <hr/>
 
+  <h4 class="text-light">GIF Results</h4>
+  <div id="gifContainer" class="container-fluid d-flex justify-content-center flex-wrap bg-warning pt-3 pb-3" style="min-height: 100px"></div>
+  <hr/>
+
+  <h4 class="text-light">Food Like This Near Me</h4>
+  <div id="yelpContainer" class='text-center bg-success' style="min-height: 100px"></div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="logic.js"></script>
 

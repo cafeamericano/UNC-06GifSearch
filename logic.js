@@ -89,8 +89,9 @@ let importedGifs = {
         for (i = 0; i < grabbedObjects.length; i++) {
             let tempID = grabbedObjects[i].id
             $("#gifContainer").prepend(`
-                <div id="${tempID}-div">
+                <div id="${tempID}-div" style="position: relative">
                     <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-isfavorited="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
+                    <button class='bg-light loveButton' style="position: absolute; right: 5px; top: 5px; border-radius: 100%"><i class="far fa-heart"></i></button>
                 </div>
             `)
         }
@@ -135,7 +136,13 @@ $(document).on("click", ".keywordButtons", function () {
 $(document).on("click", ".returnedGIF", function () {
     let id = $(this).attr("id");
     importedGifs.toggleAnimation(id)
-    favorites.add($(this), id) //Add to favorites
+});
+
+//Add to favorites
+$(document).on("click", ".loveButton", function () {
+    let id = $(this).siblings( ".returnedGIF" ).attr("id");
+    let associatedImage = $(this).siblings( ".returnedGIF" )
+    favorites.add(associatedImage, id)
 });
 
 //################## RUN PROGRAM #####################################################################################################################################

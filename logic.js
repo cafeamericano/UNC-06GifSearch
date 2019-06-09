@@ -91,7 +91,7 @@ let importedGifs = {
             $("#gifContainer").prepend(`
                 <div id="${tempID}-div" class='m-1' style="position: relative">
                     <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-isfavorited="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
-                    <button class='bg-light loveButton' style="position: absolute; right: 5px; top: 5px; border-radius: 100%"><i class="far fa-heart"></i></button>
+                    <div class='loveButton' style="position: absolute; right: 5px; top: 5px;"><i class="far fa-heart"></i></div>
                     <div class='bg-light text-center' style="position: absolute; left: 5px; bottom: 5px; width: 50px; opacity: 0.7">${grabbedObjects[i].rating.toUpperCase()}</div>
                 </div>
             `)
@@ -143,6 +143,7 @@ let favorites = {
 //Show GIFs on button click
 $(document).on("click", ".keywordButtons", function () {
     let searchTerms = $(this).val();
+    alert(`Hunting for ${searchTerms.toLowerCase()}...`)
     query.searchByTitle(searchTerms)
 });
 

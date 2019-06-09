@@ -172,29 +172,18 @@ $(document).on("click", ".loveButton", function () {
     let favoriteTest = $(this).siblings(".returnedGIF").attr("data-isfavorited")
     if (favoriteTest === 'false') {
         favoriteTest = 'true'
-        //$(this).html('<i class="fas fa-heart"></i>')
         let id = $(this).siblings(".returnedGIF").attr("id");
         let associatedImage = $(this).siblings(".returnedGIF")
         favorites.add(associatedImage, id)
         $(this).parent().remove()
     } else if (favoriteTest === 'true'){
-        //Remove it from the favorites permanent ID array
         let id = $(this).siblings(".returnedGIF").attr("id");
-        console.log(id)
         favoriteTest = 'false'
-        console.log('before editing ' + favorites.permanentIDs)
-        let splitFavs = favorites.permanentIDs //[0].split(",")
-        console.log(splitFavs)
-        let locationInFavorites = splitFavs.indexOf(id)
-        console.log(locationInFavorites)
-            splitFavs.splice(locationInFavorites, 1)
-            favorites.permanentIDs = splitFavs
-            console.log(splitFavs)
-            console.log('after editing ' + favorites.permanentIDs)
-            favorites.writeToStorage()
-        ////////
+        let locationInFavorites = favorites.permanentIDs.indexOf(id)
+        favorites.permanentIDs.splice(locationInFavorites, 1)
+        favorites.writeToStorage()
         $(this).html('<i class="far fa-heart"></i>')
-        $(this).parent().remove()
+        $(this).parent().fadeOut()
     }
 
 });

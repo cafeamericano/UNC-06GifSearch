@@ -2,24 +2,54 @@
 
 /************************** Global **************************/
 let global = {
-    topics: ['Croissants', 'Noodles', 'Sushi', 'Pizza', 'Tacos', 'Soup', 'Salad', 'Pasta'],
-    grabbedObjects: []
+    topics: [
+        {
+            label: 'Sushi', 
+            hitsX10: 0,
+        },
+        {
+            label: 'Soup',
+            hitsX10: 0,
+        },
+        {
+            label: 'Salad',
+            hitsX10: 0
+        },
+        {
+            label: 'Nachos',
+            hitsX10: 0
+        },
+        {
+            label: 'Burgers',
+            hitsX10: 0
+        },
+        {
+            label: 'Tacos',
+            hitsX10: 0
+        },
+        {
+            label: 'Ice Cream',
+            hitsX10: 0
+        }
+    ],
+    grabbedObjects: [],
 }
 
 /************************** Settings **************************/
 let settings = {
     apiKey: 'totZ3Gjqp9mJMwb9urodXV1OIB0cppGk',
     rating: 'r',
-    limit: 10
+    limit: 10,
 }
 
 /************************** Query **************************/
 let query = {
-    searchByTitle: function (arg) {
+    searchByTitle: function (arg, offsetAmount) {
         $.ajax({
-            url: `https://api.giphy.com/v1/gifs/search?q=${arg}&rating=${settings.rating}&limit=${settings.limit}&api_key=${settings.apiKey}`,
+            url: `https://api.giphy.com/v1/gifs/search?q=${arg}&offset=${offsetAmount}&rating=${settings.rating}&limit=${settings.limit}&api_key=${settings.apiKey}`,
             method: "GET",
         }).then(function (response) {
+            console.log(response)
             for (i = 0; i < response.data.length; i++) {
                 global.grabbedObjects.push(response.data[i])
             };
@@ -46,14 +76,26 @@ let query = {
 let buttons = {
     add: function () {
         let wordToBeAdded = $('#keywordInput').val();
-        global.topics.unshift(wordToBeAdded)
+        startingOffsetValue = 0;
+        let newItemObj = {
+            label: wordToBeAdded,
+            hitsX10: startingOffsetValue
+        }
+        global.topics.unshift(newItemObj)
         this.render()
     },
     render: function () {
         $("#buttonContainer").empty()
         for (i = 0; i < global.topics.length; i++) {
-            $("#buttonContainer").append(`<button class='btn btn-warning mb-3 ml-1 mr-1 keywordButtons' value='${global.topics[i]}'>${global.topics[i]}</button>`)
-        }
+            $("#buttonContainer").append(`<button class='btn btn-warning mb-3 ml-1 mr-1 keywordButtons' value='${global.topics[i].label}'>${global.topics[i].label}</button>`)
+        };
+    },
+    increaseHitCount: function(value) {
+        for (i=0; i<global.topics.length; i++) {
+            if (global.topics[i].label === value) {
+                global.topics[i].hitsX10 += 10
+            }
+        };
     }
 };
 
@@ -157,8 +199,14 @@ let favorites = {
 //Show GIFs on button click
 $(document).on("click", ".keywordButtons", function () {
     let searchTerms = $(this).val();
-    alert(`Hunting for ${searchTerms.toLowerCase()}...`)
-    query.searchByTitle(searchTerms)
+    let offsetValue;
+    for (i=0; i<global.topics.length; i++) {     //Find offset value to use during search
+        if (global.topics[i].label === searchTerms) {
+            offsetValue = global.topics[i].hitsX10
+        }
+    };
+    query.searchByTitle(searchTerms, offsetValue)
+    buttons.increaseHitCount(searchTerms) //Increase offset value
 });
 
 //Toggle animation

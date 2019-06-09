@@ -4,8 +4,6 @@
 let topics = ['Croissants', 'Noodles', 'Sushi', 'Pizza', 'Tacos', 'Soup', 'Salad', 'Pasta']
 let grabbedObjects = []
 
-
-
 //################## OBJECTS #######################################################################################################################################
 
 /************************** Settings **************************/
@@ -22,21 +20,26 @@ let query = {
             url: `http://api.giphy.com/v1/gifs/search?q=${arg}&rating=${settings.rating}&limit=${settings.limit}&api_key=${settings.apiKey}`,
             method: "GET",
         }).then(function (response) {
-            console.log(response)
-
             for (i = 0; i < response.data.length; i++) {
-                var obj = {};
-                obj.id = response.data[i].id
-                obj.imgAnimated = response.data[i].images.original.url
-                obj.imgStill = response.data[i].images.original_still.url
-                obj.rating = response.data[i].rating
-                obj.isFavorite = false;
-                grabbedObjects.push(obj)
+                grabbedObjects.push(response.data[i])
             };
             console.log(grabbedObjects)
             importedGifs.render()
-
         });
+    },
+    searchByID: function(arg) {
+        $.ajax({
+            url:`http://api.giphy.com/v1/gifs?ids=${favorites.collection}&api_key=${settings.apiKey}`,
+            method: 'GET',
+        }).then(function (response) {
+            for (i = 0; i < response.data.length; i++) {
+                favorites.collectionObj.push(response.data[i])
+            };
+            console.log(favorites.collectionObj)
+            favorites.render()
+            favorites.collectionObj = [];
+            favorites.collection = [];
+        })
     }
 };
 
@@ -54,6 +57,13 @@ let buttons = {
         }
     }
 };
+
+/************************** Imported GIFs **************************/
+let card = {
+    draw: function() {
+        
+    }
+}
 
 /************************** Imported GIFs **************************/
 let importedGifs = {
@@ -74,19 +84,32 @@ let importedGifs = {
         for (i = 0; i < grabbedObjects.length; i++) {
             let tempID = grabbedObjects[i].id
             $("#gifContainer").prepend(`
-                <div id="${tempID}-div" class='m-2 p-2 shadow' style="background: white">
-                    <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].imgStill}" data-animatedurl="${grabbedObjects[i].imgAnimated}" src=${grabbedObjects[i].imgStill}>
-                    <div class="card-footer">
-                        <button><i class="far fa-heart"></i></button>
-                        <br/>
-                        <small>Rating: ${grabbedObjects[i].rating.toUpperCase()}</small>
-                    </div>
+                <div id="${tempID}-div">
+                    <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
                 </div>
             `)
         }
     }
 };
 
+/************************** Favorites **************************/
+let favorites = {
+    collection: [],
+    collectionObj: [],
+    add: function(arg) {
+        this.collection.push(arg)
+    },
+    render: function () {
+        for (i = 0; i < favorites.collectionObj.length; i++) {
+            let tempID = favorites.collectionObj[i].id
+            $("#favoritesContainer").prepend(`
+                <div id="${tempID}-div">
+                    <img height='150px' width='150px' id="${favorites.collectionObj[i].id}-favorited" data-isanimated="false" data-stillurl="${favorites.collectionObj[i].images.original_still.url}" data-animatedurl="${favorites.collectionObj[i].images.original.url}" src=${favorites.collectionObj[i].images.original_still.url}>
+                </div>
+            `)
+        }
+    }
+}
 
 
 //################## EVENT LISTENERS #################################################################################################################################
@@ -99,11 +122,12 @@ $(document).on("click", ".keywordButtons", function () {
 
 //Toggle animation
 $(document).on("click", ".returnedGIF", function () {
-    let ID = $(this).attr("id");
-    importedGifs.toggleAnimation(ID)
+    let id = $(this).attr("id");
+    importedGifs.toggleAnimation(id)
+    favorites.collection.push(id)
+    query.searchByID(favorites.collection)
+    console.log(favorites.collection)
 });
-
-
 
 //################## RUN PROGRAM #####################################################################################################################################
 

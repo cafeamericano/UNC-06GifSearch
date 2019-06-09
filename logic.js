@@ -25,6 +25,9 @@ let query = {
             };
             console.log(grabbedObjects)
             importedGifs.render()
+
+            //Clear out the array(s) for the next query
+            grabbedObjects = [];
         });
     },
     searchByID: function(arg) {
@@ -37,6 +40,8 @@ let query = {
             };
             console.log(favorites.collectionObj)
             favorites.render()
+
+            //Clear out the array(s) for the next query
             favorites.collectionObj = [];
             favorites.collection = [];
         })
@@ -85,7 +90,7 @@ let importedGifs = {
             let tempID = grabbedObjects[i].id
             $("#gifContainer").prepend(`
                 <div id="${tempID}-div">
-                    <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
+                    <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-isfavorited="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
                 </div>
             `)
         }
@@ -104,7 +109,7 @@ let favorites = {
             let tempID = favorites.collectionObj[i].id
             $("#favoritesContainer").prepend(`
                 <div id="${tempID}-div">
-                    <img height='150px' width='150px' id="${favorites.collectionObj[i].id}-favorited" data-isanimated="false" data-stillurl="${favorites.collectionObj[i].images.original_still.url}" data-animatedurl="${favorites.collectionObj[i].images.original.url}" src=${favorites.collectionObj[i].images.original_still.url}>
+                    <img height='150px' width='150px' id="${favorites.collectionObj[i].id}-favorited" data-isanimated="false" data-stillurl="${favorites.collectionObj[i].images.original_still.url}" data-animatedurl="${favorites.collectionObj[i].images.original.url}" src=${favorites.collectionObj[i].images.original.url}>
                 </div>
             `)
         }
@@ -124,9 +129,17 @@ $(document).on("click", ".keywordButtons", function () {
 $(document).on("click", ".returnedGIF", function () {
     let id = $(this).attr("id");
     importedGifs.toggleAnimation(id)
-    favorites.collection.push(id)
-    query.searchByID(favorites.collection)
-    console.log(favorites.collection)
+    
+    //Mark as a favorite if not marked before
+    let favoriteStatus = $(this).attr('data-isfavorited')
+    console.log(favoriteStatus)
+    if (favoriteStatus === 'false') {
+        $(this).attr('data-isfavorited', 'true')
+        favorites.collection.push(id)
+        query.searchByID(favorites.collection)
+        console.log(favorites.collection)
+    };
+    
 });
 
 //################## RUN PROGRAM #####################################################################################################################################

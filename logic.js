@@ -23,9 +23,7 @@ let query = {
             for (i = 0; i < response.data.length; i++) {
                 global.grabbedObjects.push(response.data[i])
             };
-            console.log(global.grabbedObjects)
             importedGifs.render()
-
             //Clear out the array(s) for the next query
             global.grabbedObjects = [];
         });
@@ -36,14 +34,10 @@ let query = {
             method: 'GET',
         }).then(function (response) {
             for (i = 0; i < response.data.length; i++) {
-                favorites.collectionObj.push(response.data[i])
+                favorites.tempObjects.push(response.data[i])
             };
-            console.log(favorites.collectionObj)
             favorites.render()
-
-            //Clear out the array(s) for the next query
-            favorites.collectionObj = [];
-            favorites.collection = [];
+            favorites.clearTempIDsAndObjects()
         })
     }
 };
@@ -65,19 +59,38 @@ let buttons = {
 
 /************************** Imported GIFs **************************/
 let card = {
-    draw: function (receivingContainer, object) {
+    draw: function (receivingContainer, object, asFavorite) {
+        if (asFavorite === true) {
+            heartIcon = '<i class="fas fa-heart"></i>';
+            favoriteStatus = 'true'
+        } else {
+            heartIcon = '<i class="far fa-heart"></i>'
+            favoriteStatus = 'false'
+        };
         $(receivingContainer).prepend(`
         <div id="${object.id}-div" class='m-1' style="position: relative">
-            <img height='150px' width='150px' id="${object.id}" class="returnedGIF" data-isanimated="false" data-isfavorited="false" data-stillurl="${object.images.original_still.url}" data-animatedurl="${object.images.original.url}" src=${object.images.original_still.url}>
-            <div class='loveButton' style="position: absolute; right: 5px; top: 5px;"><i class="far fa-heart"></i></div>
-            <div class='bg-light text-center' style="position: absolute; left: 5px; bottom: 5px; width: 50px; opacity: 0.7">${object.rating.toUpperCase()}</div>
+            <img 
+                height='150px' 
+                width='150px' 
+                id="${object.id}" 
+                style='border-radius: 10px' 
+                class="returnedGIF" 
+                data-isanimated="false" 
+                data-isfavorited="${favoriteStatus}" 
+                data-stillurl="${object.images.original_still.url}" 
+                data-animatedurl="${object.images.original.url}" 
+                src=${object.images.original_still.url}>
+            <div 
+                class='loveButton' 
+                style="position: absolute; right: 5px; top: 5px;">
+                ${heartIcon}</div>
+            <div 
+                class='bg-light text-center' 
+                style="position: absolute; left: 5px; bottom: 5px; width: 50px; opacity: 0.7">
+                ${object.rating.toUpperCase()}</div>
         </div>
-        `)
-    }
-}
-
-/************************** Imported GIFs **************************/
-let importedGifs = {
+        `);
+    },
     toggleAnimation: function (arg) {
         let tag = `#${arg}`
         let animatedURL = $(tag).attr("data-animatedurl");
@@ -91,47 +104,48 @@ let importedGifs = {
             $(tag).attr('data-isanimated', 'false')
         }
     },
+}
+
+/************************** Imported GIFs **************************/
+let importedGifs = {
     render: function () {
         for (i = 0; i < global.grabbedObjects.length; i++) {
-            let temp = global.grabbedObjects[i]
-            card.draw('#gifContainer', temp)
+            card.draw('#gifContainer', global.grabbedObjects[i], false)
         }
     }
 };
 
 /************************** Favorites **************************/
 let favorites = {
-    collection: [],
-    collectionObj: [],
-    package: [],
+    tempIDs: [],
+    tempObjects: [],
+    permanentIDs: [],
     add: function (element, id) {
         let favoriteStatus = element.attr('data-isfavorited')
         if (favoriteStatus === 'false') {
             element.attr('data-isfavorited', 'true')
-            favorites.collection.push(id)
-            favorites.package.push(id)
+            favorites.tempIDs.push(id)
+            favorites.permanentIDs.push(id)
             this.writeToStorage();
-            query.searchByID(favorites.collection)
-            console.log(favorites.collection)
+            element.remove() //Remove from general section
+            query.searchByID(favorites.tempIDs) //Place in favorites section
         };
     },
     render: function () {
-        for (i = 0; i < favorites.collectionObj.length; i++) {
-            let tempID = favorites.collectionObj[i].id
-            $("#favoritesContainer").prepend(`
-                <div id="${tempID}-div" class='m-1'>
-                    <img height='150px' width='150px' id="${favorites.collectionObj[i].id}-favorited" class='returnedGIF' data-isanimated="false" data-stillurl="${favorites.collectionObj[i].images.original_still.url}" data-animatedurl="${favorites.collectionObj[i].images.original.url}" src=${favorites.collectionObj[i].images.original_still.url}>
-                </div>
-            `)
+        for (i = 0; i < favorites.tempObjects.length; i++) {
+            card.draw('#favoritesContainer', favorites.tempObjects[i], true)
         }
     },
+    clearTempIDsAndObjects: function () {
+        favorites.tempObjects = [];
+        favorites.tempIDs = [];
+    },
     writeToStorage: function () {
-        localStorage.setItem('favorites', `${this.package}`);
+        localStorage.setItem('favorites', `${this.permanentIDs}`);
     },
     readFromStorage: function () {
         var favs = localStorage.getItem('favorites');
-        console.log('favs are ' + favs)
-        this.package.push(favs)
+        this.permanentIDs.push(favs)
         query.searchByID(favs)
     }
 };
@@ -150,7 +164,7 @@ $(document).on("click", ".keywordButtons", function () {
 //Toggle animation
 $(document).on("click", ".returnedGIF", function () {
     let id = $(this).attr("id");
-    importedGifs.toggleAnimation(id)
+    card.toggleAnimation(id)
 });
 
 //Add to favorites
@@ -158,14 +172,29 @@ $(document).on("click", ".loveButton", function () {
     let favoriteTest = $(this).siblings(".returnedGIF").attr("data-isfavorited")
     if (favoriteTest === 'false') {
         favoriteTest = 'true'
-        $(this).html('<i class="fas fa-heart"></i>')
+        //$(this).html('<i class="fas fa-heart"></i>')
         let id = $(this).siblings(".returnedGIF").attr("id");
         let associatedImage = $(this).siblings(".returnedGIF")
         favorites.add(associatedImage, id)
-    } else {
-        alert('not false')
+        $(this).parent().remove()
+    } else if (favoriteTest === 'true'){
+        //Remove it from the favorites permanent ID array
+        let id = $(this).siblings(".returnedGIF").attr("id");
+        console.log(id)
         favoriteTest = 'false'
+        console.log('before editing ' + favorites.permanentIDs)
+        let splitFavs = favorites.permanentIDs //[0].split(",")
+        console.log(splitFavs)
+        let locationInFavorites = splitFavs.indexOf(id)
+        console.log(locationInFavorites)
+            splitFavs.splice(locationInFavorites, 1)
+            favorites.permanentIDs = splitFavs
+            console.log(splitFavs)
+            console.log('after editing ' + favorites.permanentIDs)
+            favorites.writeToStorage()
+        ////////
         $(this).html('<i class="far fa-heart"></i>')
+        $(this).parent().remove()
     }
 
 });

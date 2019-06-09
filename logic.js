@@ -32,7 +32,7 @@ let query = {
     },
     searchByID: function (arg) {
         $.ajax({
-            url: `https://api.giphy.com/v1/gifs?ids=${favorites.collection}&api_key=${settings.apiKey}`,
+            url: `https://api.giphy.com/v1/gifs?ids=${arg}&api_key=${settings.apiKey}`,
             method: 'GET',
         }).then(function (response) {
             for (i = 0; i < response.data.length; i++) {
@@ -58,7 +58,7 @@ let buttons = {
     render: function () {
         $("#buttonContainer").empty()
         for (i = 0; i < topics.length; i++) {
-            $("#buttonContainer").append(`<button class='btn btn-success mb-3 ml-1 mr-1 keywordButtons' value='${topics[i]}'>${topics[i]}</button>`)
+            $("#buttonContainer").append(`<button class='btn btn-warning mb-3 ml-1 mr-1 keywordButtons' value='${topics[i]}'>${topics[i]}</button>`)
         }
     }
 };
@@ -89,7 +89,7 @@ let importedGifs = {
         for (i = 0; i < grabbedObjects.length; i++) {
             let tempID = grabbedObjects[i].id
             $("#gifContainer").prepend(`
-                <div id="${tempID}-div" style="position: relative">
+                <div id="${tempID}-div" class='m-1' style="position: relative">
                     <img height='150px' width='150px' id="${grabbedObjects[i].id}" class="returnedGIF" data-isanimated="false" data-isfavorited="false" data-stillurl="${grabbedObjects[i].images.original_still.url}" data-animatedurl="${grabbedObjects[i].images.original.url}" src=${grabbedObjects[i].images.original_still.url}>
                     <button class='bg-light loveButton' style="position: absolute; right: 5px; top: 5px; border-radius: 100%"><i class="far fa-heart"></i></button>
                     <div class='bg-light text-center' style="position: absolute; left: 5px; bottom: 5px; width: 50px; opacity: 0.7">${grabbedObjects[i].rating.toUpperCase()}</div>
@@ -103,11 +103,14 @@ let importedGifs = {
 let favorites = {
     collection: [],
     collectionObj: [],
+    package: [],
     add: function (element, id) {
         let favoriteStatus = element.attr('data-isfavorited')
         if (favoriteStatus === 'false') {
             element.attr('data-isfavorited', 'true')
             favorites.collection.push(id)
+            favorites.package.push(id)
+            this.writeToStorage();
             query.searchByID(favorites.collection)
             console.log(favorites.collection)
         };
@@ -116,16 +119,26 @@ let favorites = {
         for (i = 0; i < favorites.collectionObj.length; i++) {
             let tempID = favorites.collectionObj[i].id
             $("#favoritesContainer").prepend(`
-                <div id="${tempID}-div">
+                <div id="${tempID}-div" class='m-1'>
                     <img height='150px' width='150px' id="${favorites.collectionObj[i].id}-favorited" data-isanimated="false" data-stillurl="${favorites.collectionObj[i].images.original_still.url}" data-animatedurl="${favorites.collectionObj[i].images.original.url}" src=${favorites.collectionObj[i].images.original.url}>
                 </div>
             `)
         }
+    },
+    writeToStorage: function() {
+        localStorage.setItem('favorites', `${this.package}`);
+    },
+    readFromStorage: function() {
+        var favs = localStorage.getItem('favorites');
+        console.log('favs are ' + favs)
+        this.package.push(favs)
+        query.searchByID(favs)
     }
 };
 
 
 //################## EVENT LISTENERS #################################################################################################################################
+
 
 //Show GIFs on button click
 $(document).on("click", ".keywordButtons", function () {
@@ -141,12 +154,22 @@ $(document).on("click", ".returnedGIF", function () {
 
 //Add to favorites
 $(document).on("click", ".loveButton", function () {
-    $(this).html('<i class="fas fa-heart"></i>')
-    let id = $(this).siblings( ".returnedGIF" ).attr("id");
-    let associatedImage = $(this).siblings( ".returnedGIF" )
-    favorites.add(associatedImage, id)
+    let favoriteTest = $(this).siblings( ".returnedGIF" ).attr("data-isfavorited")
+    if ( favoriteTest === 'false'){
+        favoriteTest = 'true'
+        $(this).html('<i class="fas fa-heart"></i>')
+        let id = $(this).siblings( ".returnedGIF" ).attr("id");
+        let associatedImage = $(this).siblings( ".returnedGIF" )
+        favorites.add(associatedImage, id)
+    } else {
+        alert('not false')
+        favoriteTest = 'false'
+        $(this).html('<i class="far fa-heart"></i>')
+    }
+
 });
 
 //################## RUN PROGRAM #####################################################################################################################################
 
+favorites.readFromStorage();
 buttons.render()

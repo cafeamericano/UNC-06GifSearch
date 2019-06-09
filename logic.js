@@ -140,6 +140,7 @@ $(document).on("click", ".returnedGIF", function () {
 
 //Add to favorites
 $(document).on("click", ".loveButton", function () {
+    $(this).html('<i class="fas fa-heart"></i>')
     let id = $(this).siblings( ".returnedGIF" ).attr("id");
     let associatedImage = $(this).siblings( ".returnedGIF" )
     favorites.add(associatedImage, id)

@@ -17,7 +17,7 @@ let settings = {
 let query = {
     searchByTitle: function (arg) {
         $.ajax({
-            url: `http://api.giphy.com/v1/gifs/search?q=${arg}&rating=${settings.rating}&limit=${settings.limit}&api_key=${settings.apiKey}`,
+            url: `https://api.giphy.com/v1/gifs/search?q=${arg}&rating=${settings.rating}&limit=${settings.limit}&api_key=${settings.apiKey}`,
             method: "GET",
         }).then(function (response) {
             for (i = 0; i < response.data.length; i++) {
@@ -30,9 +30,9 @@ let query = {
             grabbedObjects = [];
         });
     },
-    searchByID: function(arg) {
+    searchByID: function (arg) {
         $.ajax({
-            url:`http://api.giphy.com/v1/gifs?ids=${favorites.collection}&api_key=${settings.apiKey}`,
+            url: `https://api.giphy.com/v1/gifs?ids=${favorites.collection}&api_key=${settings.apiKey}`,
             method: 'GET',
         }).then(function (response) {
             for (i = 0; i < response.data.length; i++) {
@@ -65,8 +65,8 @@ let buttons = {
 
 /************************** Imported GIFs **************************/
 let card = {
-    draw: function() {
-        
+    draw: function () {
+
     }
 }
 
@@ -101,8 +101,14 @@ let importedGifs = {
 let favorites = {
     collection: [],
     collectionObj: [],
-    add: function(arg) {
-        this.collection.push(arg)
+    add: function (element, id) {
+        let favoriteStatus = element.attr('data-isfavorited')
+        if (favoriteStatus === 'false') {
+            element.attr('data-isfavorited', 'true')
+            favorites.collection.push(id)
+            query.searchByID(favorites.collection)
+            console.log(favorites.collection)
+        };
     },
     render: function () {
         for (i = 0; i < favorites.collectionObj.length; i++) {
@@ -114,7 +120,7 @@ let favorites = {
             `)
         }
     }
-}
+};
 
 
 //################## EVENT LISTENERS #################################################################################################################################
@@ -129,17 +135,7 @@ $(document).on("click", ".keywordButtons", function () {
 $(document).on("click", ".returnedGIF", function () {
     let id = $(this).attr("id");
     importedGifs.toggleAnimation(id)
-    
-    //Mark as a favorite if not marked before
-    let favoriteStatus = $(this).attr('data-isfavorited')
-    console.log(favoriteStatus)
-    if (favoriteStatus === 'false') {
-        $(this).attr('data-isfavorited', 'true')
-        favorites.collection.push(id)
-        query.searchByID(favorites.collection)
-        console.log(favorites.collection)
-    };
-    
+    favorites.add($(this), id) //Add to favorites
 });
 
 //################## RUN PROGRAM #####################################################################################################################################

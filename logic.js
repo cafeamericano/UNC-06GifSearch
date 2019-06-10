@@ -192,11 +192,11 @@ let favorites = {
         let localStore = localStorage.getItem('favorites')
         if (localStore !== undefined) {
             favs = localStore.split(',');
-        }
-        for (i=0; i < favs.length; i++) {
-            this.permanentIDs.push(favs[i])
-        }
-        query.searchByID(favs)
+            for (i=0; i < favs.length; i++) {
+                this.permanentIDs.push(favs[i])
+            };
+            query.searchByID(favs)
+        };
     }
 };
 

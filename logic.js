@@ -188,7 +188,10 @@ let favorites = {
         localStorage.setItem('favorites', `${this.permanentIDs}`);
     },
     readFromStorage: function () {
-        var favs = localStorage.getItem('favorites').split(',');
+        let localStore = localStorage.getItem('favorites')
+        if (localStore !== undefined) {
+            var favs = localStore.split(',');
+        }
         for (i=0; i < favs.length; i++) {
             this.permanentIDs.push(favs[i])
         }

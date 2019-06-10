@@ -4,7 +4,7 @@
 let global = {
     topics: [
         {
-            label: 'Sushi', 
+            label: 'Sushi',
             hitsX10: 0,
         },
         {
@@ -90,8 +90,8 @@ let buttons = {
             $("#buttonContainer").append(`<button class='btn btn-warning mb-3 ml-1 mr-1 keywordButtons' value='${global.topics[i].label}'>${global.topics[i].label}</button>`)
         };
     },
-    increaseHitCount: function(value) {
-        for (i=0; i<global.topics.length; i++) {
+    increaseHitCount: function (value) {
+        for (i = 0; i < global.topics.length; i++) {
             if (global.topics[i].label === value) {
                 global.topics[i].hitsX10 += 10
             }
@@ -186,8 +186,10 @@ let favorites = {
         localStorage.setItem('favorites', `${this.permanentIDs}`);
     },
     readFromStorage: function () {
-        var favs = localStorage.getItem('favorites');
-        this.permanentIDs.push(favs)
+        var favs = localStorage.getItem('favorites').split(',');
+        for (i=0; i < favs.length; i++) {
+            this.permanentIDs.push(favs[i])
+        }
         query.searchByID(favs)
     }
 };
@@ -200,7 +202,7 @@ let favorites = {
 $(document).on("click", ".keywordButtons", function () {
     let searchTerms = $(this).val();
     let offsetValue;
-    for (i=0; i<global.topics.length; i++) {     //Find offset value to use during search
+    for (i = 0; i < global.topics.length; i++) {     //Find offset value to use during search
         if (global.topics[i].label === searchTerms) {
             offsetValue = global.topics[i].hitsX10
         }
@@ -224,13 +226,14 @@ $(document).on("click", ".loveButton", function () {
         let associatedImage = $(this).siblings(".returnedGIF")
         favorites.add(associatedImage, id)
         $(this).parent().remove()
-    } else if (favoriteTest === 'true'){
+    } else if (favoriteTest === 'true') {
         console.log(favorites.permanentIDs)
         let id = $(this).siblings(".returnedGIF").attr("id");
+        console.log(id)
         favoriteTest = 'false'
         let locationInFavorites = favorites.permanentIDs.indexOf(id)
         console.log(locationInFavorites)
-        if(locationInFavorites !== -1) { //Prevent erasure of all favorites in case of index -1
+        if (locationInFavorites !== -1) { //Prevent erasure of all favorites in case of index -1
             favorites.permanentIDs.splice(locationInFavorites, 1)
         }
         favorites.writeToStorage()

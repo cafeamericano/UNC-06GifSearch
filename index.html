@@ -16,11 +16,10 @@
 
   <div class='bg-success pt-3 pb-5' style="background-size: cover; background-image: url(https://upload.wikimedia.org/wikipedia/commons/c/c1/APileOfCroissants.jpg)">
     <h1 class='text-center mt-5 text-light' style="font-family: 'Luckiest Guy', cursive;">Foodpalooza</h1>
-    <div class='text-center'>
-      <input id='keywordInput' type='text' class='form-control' style='width: 200px; opacity: 0.8; margin: auto'>
-      <br><br>
-      <button onclick="buttons.add()" type='submit' class='btn btn-outline-light'>Submit</button>
-    </div>
+    <form class='text-center' onsubmit="buttons.add()">
+      <input id='keywordInput' type='text' class='form-control' style='display: inline; opacity: 0.8; margin: auto; max-width: 200px;' placeholder="Add a new topic">
+      <button type='submit' class='btn btn-outline-light'>Add</button>
+    </form>
   </div>
 
   <h4 class="text-light p-2">Buttons</h4>

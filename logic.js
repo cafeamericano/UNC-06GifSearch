@@ -75,6 +75,7 @@ let query = {
 /************************** Buttons **************************/
 let buttons = {
     add: function () {
+        event.preventDefault()
         let wordToBeAdded = $('#keywordInput').val();
         startingOffsetValue = 0;
         let newItemObj = {
@@ -83,6 +84,7 @@ let buttons = {
         }
         global.topics.unshift(newItemObj)
         this.render()
+        $('#keywordInput').val(''); //Make the input field blank for next entry
     },
     render: function () {
         $("#buttonContainer").empty()

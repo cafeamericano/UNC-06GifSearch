@@ -229,22 +229,28 @@ $(document).on("click", ".loveButton", function () {
         favorites.add(associatedImage, id)
         $(this).parent().remove()
     } else if (favoriteTest === 'true') {
-        console.log(favorites.permanentIDs)
         let id = $(this).siblings(".returnedGIF").attr("id");
-        console.log(id)
         favoriteTest = 'false'
         let locationInFavorites = favorites.permanentIDs.indexOf(id)
-        console.log(locationInFavorites)
         if (locationInFavorites !== -1) { //Prevent erasure of all favorites in case of index -1
             favorites.permanentIDs.splice(locationInFavorites, 1)
         }
         favorites.writeToStorage()
-        console.log(favorites.permanentIDs)
-
         $(this).html('<i class="far fa-heart"></i>')
         $(this).parent().fadeOut()
     }
+});
 
+//GIF mouseover effect
+$(document).on("mouseover", ".returnedGIF", function () {
+    $(this).removeClass('deflated');
+    $(this).addClass('inflated');
+});
+
+//GIF mouseout effect
+$(document).on("mouseout", ".returnedGIF", function () {
+    $(this).removeClass('inflated');
+    $(this).addClass('deflated');
 });
 
 //################## RUN PROGRAM #####################################################################################################################################

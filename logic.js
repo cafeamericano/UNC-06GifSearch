@@ -116,7 +116,7 @@ let card = {
                 width='150px' 
                 id="${object.id}" 
                 style='border-radius: 10px' 
-                class="returnedGIF" 
+                class="returnedGIF ${object.id}" 
                 data-isanimated="false" 
                 data-isfavorited="${favoriteStatus}" 
                 data-stillurl="${object.images.original_still.url}" 
@@ -134,7 +134,7 @@ let card = {
         `);
     },
     toggleAnimation: function (arg) {
-        let tag = `#${arg}`
+        let tag = `.${arg}`
         let animatedURL = $(tag).attr("data-animatedurl");
         let stillURL = $(tag).attr("data-stillurl");
         let isAnimated = $(tag).attr("data-isanimated");
@@ -225,11 +225,17 @@ $(document).on("click", ".loveButton", function () {
         favorites.add(associatedImage, id)
         $(this).parent().remove()
     } else if (favoriteTest === 'true'){
+        console.log(favorites.permanentIDs)
         let id = $(this).siblings(".returnedGIF").attr("id");
         favoriteTest = 'false'
         let locationInFavorites = favorites.permanentIDs.indexOf(id)
-        favorites.permanentIDs.splice(locationInFavorites, 1)
+        console.log(locationInFavorites)
+        if(locationInFavorites !== -1) { //Prevent erasure of all favorites in case of index -1
+            favorites.permanentIDs.splice(locationInFavorites, 1)
+        }
         favorites.writeToStorage()
+        console.log(favorites.permanentIDs)
+
         $(this).html('<i class="far fa-heart"></i>')
         $(this).parent().fadeOut()
     }

@@ -89,7 +89,7 @@ let buttons = {
     render: function () {
         $("#buttonContainer").empty()
         for (i = 0; i < global.topics.length; i++) {
-            $("#buttonContainer").append(`<button class='btn btn-warning mb-3 ml-1 mr-1 keywordButtons' value='${global.topics[i].label}'>${global.topics[i].label}</button>`)
+            $("#buttonContainer").append(`<button class='btn btn-success ml-1 mr-1 keywordButtons' value='${global.topics[i].label}'>${global.topics[i].label}</button>`)
         };
     },
     increaseHitCount: function (value) {
